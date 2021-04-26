@@ -1,11 +1,11 @@
 const Todo = (props) => {
-  const { todo, deleteTodo, toggleCompleteTodo } = props
+  const { todo, deleteTodo, toggleCompleteTodo, darkMode} = props
   const style = {
     textDecoration: todo.isCompleted ? "line-through" : "none"
   }
   return (
     <div className="shadow-sm border p-2 d-flex align-items-center justify-content-between mb-2">
-      <span style={style}>{todo.text}</span>
+      <span className={darkMode ? 'text-white' : ''}style={style}>{todo.text}</span>
       <div className="btn-group">
         {todo.isCompleted ? (
           <button

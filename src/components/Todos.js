@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import TodosList from "./TodosList"
 import SelectTodos from "./SelectTodos"
 import AddTodoForm from "./AddTodoForm"
@@ -32,8 +32,11 @@ const initialTodos = [
   }
 ]
 
-const Todos = () => {
-  const [todos, setTodos] = useState(initialTodos)
+const Todos = ({setDarkMode, darkMode}) => {
+  const setInStorageTodos = () =>  JSON.parse(window.localStorage.getItem("todolist")) || initialTodos;
+  
+
+  const [todos, setTodos] = useState(setInStorageTodos)
   const [filter, setFilter] = useState("all")
 
   const addTodo = (text) => {
@@ -48,6 +51,7 @@ const Todos = () => {
   const deleteTodo = (task) => {
     setTodos(todos.filter((el) => el.id !== task.id))
   }
+
 
   const toggleCompleteTodo = (task) => {
     setTodos(
@@ -73,10 +77,24 @@ const Todos = () => {
     return true
   })
 
+  useEffect(() => {
+    document.title = todos.length ? `Vous avez ${todos.length} tâches` : ''
+  }, [todos.length])
+
+  useEffect(() => {
+
+
+  }, [todos])
+
+  useEffect(() => {
+    window.localStorage.setItem('todolist', JSON.stringify(todos))
+  }, [todos])
+
+
   const completedCount = todos.filter((el) => el.isCompleted).length
   return (
     <main>
-      <h2 className="text-center">
+      <h2 className={`text-center ${darkMode ? 'text-white' : ' '}`}>
         Ma liste de tâches ({completedCount} / {todos.length})
       </h2>
       <SelectTodos filter={filter} setFilter={setFilter} />
@@ -84,8 +102,10 @@ const Todos = () => {
         todos={filteredTodos}
         deleteTodo={deleteTodo}
         toggleCompleteTodo={toggleCompleteTodo}
+        darkMode={darkMode}
       />
-      <AddTodoForm addTodo={addTodo} setFilter={setFilter} />
+      <AddTodoForm addTodo={addTodo} setFilter={setFilter} darkMode={darkMode} setDarkMode={setDarkMode} />
+      
     </main>
   )
 }
